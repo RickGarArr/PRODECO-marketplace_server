@@ -3,6 +3,7 @@ const fileUpload = require('express-fileupload');
 const Solicitud = require('../models/solicitud.model');
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(fileUpload({
@@ -113,8 +114,17 @@ app.post('/solicitud/crear', function (req, res) {
                             err
                         });
                     } else {
+                        let tokenSolicitud = {
+                            idSolicitud: solicitudDB.id,
+                            nombre: solicitudDB.nombre,
+                            telefono: solicitudDB.telefono,
+                            email: solicitudDB.email
+                        };
+
+                        let token = jwt.sign({solicitud: tokenSolicitud}, process.env.SEED, {expiresIn: process.env.CADUCIDAD_TOKEN});
                         res.json({
-                            solicitudDB
+                            ok: true,
+                            token
                         });
                     }
                 });
