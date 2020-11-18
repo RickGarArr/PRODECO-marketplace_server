@@ -28,7 +28,15 @@ let consumidorSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    direcciones: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Direcciones'
+    }],
+    compras: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Compras'
+    }]
 });
 
 consumidorSchema.pre('save', function(next){

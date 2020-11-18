@@ -1,9 +1,6 @@
 /node_modules
-# ignorar todos los archivos
-uploads/solicitudes/*
-# conservar la carpeta
-!uploads/solicitudes/.gitkeep
-# 
-uploads/tiendas/*
-!uploads/tiendas/.gitkeep
+
+!/uploads/solicitudes/*.jpg
+
+
 
