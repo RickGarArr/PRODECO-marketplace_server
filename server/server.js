@@ -4,6 +4,7 @@ require('./config/config');
 const expres = require('express');
 const bodyPareser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 let app = expres();
 
@@ -12,6 +13,7 @@ app.use(bodyPareser.json());
 
 // rutas
 app.use(require('./routes/all.routes'));
+app.use(cors({ origin: true, credentials: true}));
 
 let mongooseSettings = {
     useNewUrlParser: true,

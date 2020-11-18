@@ -3,7 +3,6 @@ const fileUpload = require('express-fileupload');
 const Solicitud = require('../models/solicitud.model');
 const path = require('path');
 const fs = require('fs');
-const { send, cpuUsage } = require('process');
 
 const app = express();
 app.use(fileUpload({

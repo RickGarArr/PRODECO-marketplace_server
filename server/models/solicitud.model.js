@@ -33,7 +33,7 @@ let solicitudSchema = new Schema({
 });
 
 solicitudSchema.pre('save', function(next){
-    this.fechaCreacion = new Date();
+    this.fechaCreacion = new Date().toUTCString();
     next();
 });
 
