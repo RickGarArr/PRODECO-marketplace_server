@@ -41,7 +41,22 @@ let productoSchema = new Schema({
         descripcion: {
             type: String
         }
-    }]
+    }],
+    fechaCreacion: {
+        type: Date,
+        required: true
+    }
+});
+
+productoSchema.pre('save', function(next){
+    this.fechaCreacion = new Date().toUTCString();
+    next();
+});
+
+productoSchema.method('toJSON', function(){
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
 });
 
 module.exports = mongoose.model('Productos', productoSchema);

@@ -37,6 +37,12 @@ solicitudSchema.pre('save', function(next){
     next();
 });
 
+solicitudSchema.method('toJSON', function(){
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
+
 solicitudSchema.plugin( uniqueValidator, {message: '{PATH} debe ser unico'});
 
 module.exports = mongoose.model('Solicitudes', solicitudSchema);

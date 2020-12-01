@@ -28,7 +28,7 @@ router.post('/post', [
     check('email', 'El campo EMAIL es requerido').notEmpty(),
     validarCampos
 ], postSolicitud);
-
+// ruta para mostrar archivos
 router.get('/file/:id/:imagen', [
     check('id', 'El es necesario').notEmpty(),
     check('imagen', 'la imagen debe ser necesaria').notEmpty(),

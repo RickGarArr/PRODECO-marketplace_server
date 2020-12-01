@@ -43,6 +43,13 @@ consumidorSchema.pre('save', function(next){
     this.fechaCreacion = new Date().toUTCString();
     next();
 });
+
+consumidorSchema.method('toJSON', function(){
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
+
 consumidorSchema.plugin(uniqueValidator, {message: '{PATH} debe ser unico'});
 
 module.exports = mongoose.model('Consumidores', consumidorSchema);

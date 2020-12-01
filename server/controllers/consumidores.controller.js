@@ -15,11 +15,11 @@ const postConsumidor = async (req, res) => {
         });
     
         const consumidorDB = await consumidor.save();
-        const token = generarJWT({uid: consumidorDB.id});
+        const jwt = generarJWT({uid: consumidorDB.id});
         res.json({
             ok: true,
-            consumidorDB,
-            token
+            // consumidorDB,
+            token: jwt
         });
     } catch (error) {
         console.log(error);

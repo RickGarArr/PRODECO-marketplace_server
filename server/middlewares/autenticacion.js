@@ -1,36 +1,46 @@
+const Consumidor = require('../models/consumidor.model');
+
+const { request } = require('express');
 const jwt = require('jsonwebtoken');
 
-let verificaToken = (req, res, next) => {
-    let token = req.get('x-token');
+let verificarToken = (req = request, res, next) => {
+    let token = req.header('x-token');
+    if (!token) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'No hay token en la solicitud'
+        });
+    }
 
-    jwt.verify(token, process.env.SEED, function(err, decoded){
-        if (err) {
-            return res.json({
-                ok: false,
-                err
-            });
-        }
-        req.usuario = decoded.usuario;
+    try {
+        const { uid } = jwt.verify(token, process.env.JWT_SECRET);
+        req.uid = uid;
         next();
-    });
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'invalid JWT'
+        });
+    }
 }
 
-let verificaTokenSolicitud = (req, res, next) => {
-    let token = req.get('x-token');
-
-    jwt.verify(token, process.env.SEED, function (err, decoded) {
-        if (err) {
-            return res.json({
+verificarConsumidor = async (req, res, next) => {
+    try {
+        const idConsumidor = req.uid;
+        consumiodorDB = await Consumidor.findById(idConsumidor);
+        if (!consumiodorDB) {
+            return res.status(500).json({
                 ok: false,
-                err
+                msg: 'El token no pertenece a un Consumidor'
             });
         }
-        req.solicitud = decoded.solicitud;
         next();
-    });
-}
+    } catch (error) {
+        console.log(error);
+    }
 
+}
 module.exports = {
-    verificaToken,
-    verificaTokenSolicitud
+    verificarToken,
+    verificarConsumidor
 }

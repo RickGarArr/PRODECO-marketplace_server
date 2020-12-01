@@ -1,12 +1,15 @@
 const { Router } = require('express');
-const { check } = require('express-validator');
 const { postDireccion, deleteDireccion, getDirecciones } = require('../controllers/direcciones.controller');
+const { check } = require('express-validator');
 const {validarCampos} = require('../middlewares/validar-campos');
+const { verificarToken, verificarConsumidor } = require('../middlewares/autenticacion');
 
 const router = Router();
+// /direcciones 
 
-router.post('/consumidor/post/:id', [
-    check('id', 'El parametro ID debe ser MongoID').isMongoId(),
+router.post('/consumidor/post', [
+    verificarToken,
+    verificarConsumidor,
     check('contacto.nombre', 'El Nombre es requerido').notEmpty(),
     check('contacto.apellidoPat', 'El Apellido es requerido').notEmpty(),
     check('contacto.telefono', 'El Telefono es requerido').notEmpty(),

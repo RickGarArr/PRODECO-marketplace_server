@@ -3,8 +3,8 @@ const Consumidor = require('../models/consumidor.model');
 
 const postDireccion = async (req, res) => {
     try {
-
-        const uid = req.params.id;
+        const uid = req.uid;
+        console.log(uid);
         const consumidorDB = await Consumidor.findById(uid);
         if(!consumidorDB) {
             return res.status(500).json({

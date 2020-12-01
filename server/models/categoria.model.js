@@ -15,6 +15,12 @@ let categoriaSchema = new Schema({
     }
 });
 
+categoriaSchema.method('toJSON', function(){
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
+
 categoriaSchema.plugin(uniqueValidator, {message: '{PATH} ya esta registrado'});
 
 module.exports = mongoose.model('Categorias', categoriaSchema);

@@ -36,6 +36,12 @@ comercioSchema.pre('save', function(next){
     next();
 });
 
+comercioSchema.method('toJSON', function(){
+    const { __v, _id, ...object } = this.toObject();
+    object.id = _id;
+    return object;
+});
+
 comercioSchema.plugin(uniqueValidator, {message: '{PATH} debe ser unico'});
 
 module.exports = mongoose.model('Comercios', comercioSchema);
