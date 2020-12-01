@@ -46,7 +46,7 @@ app.post('/comercio/crear', verificaTokenSolicitud, function (req, res){
             });
         }
 
-        let token = jwt.sign({consumidor: consumidorDB}, process.env.SEED, {expiresIn: process.env.CADUCIDAD_TOKEN});
+        let token = jwt.sign({consumidor: comercioDB}, process.env.SEED, {expiresIn: process.env.CADUCIDAD_TOKEN});
         
         res.json({
             ok: true,

@@ -17,17 +17,17 @@ let consumidorSchema = new Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique: [true, 'El Correo es Obligatorio']
+        required: [true, 'El Correo es Obligatorio'],
+        unique: true
     },
-    curp: {
+    telefono: {
         type: String,
-        required: true,
-        unique: true,
+        required: [true, 'El Telefono es Obligatorio'],
+        unique: true
     },
     password: {
         type: String,
-        required: true
+        required: [true, 'la Contraseña es Obligatorio'],
     },
     direcciones: [{
         type: Schema.Types.ObjectId,
