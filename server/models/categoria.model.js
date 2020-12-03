@@ -12,11 +12,20 @@ let categoriaSchema = new Schema({
     descripcion: {
         type: String,
         required: [true, 'La descripcion es necesaria']
+    },
+    administrador: {
+        type: Schema.Types.ObjectId,
+        required: [true, 'El usuario quien la creo es necesario']
+    },
+    activo: {
+        type: Boolean,
+        required: [true, 'El campo activo es requerido'],
+        default: true
     }
 });
 
 categoriaSchema.method('toJSON', function(){
-    const { __v, _id, ...object } = this.toObject();
+    const { __v, _id, administrador,...object } = this.toObject();
     object.id = _id;
     return object;
 });

@@ -1,4 +1,6 @@
 const Consumidor = require('../models/consumidor.model');
+const Admin = require('../models/admin.model');
+const Comercio = require('../models/comercio.model');
 
 const { request } = require('express');
 const jwt = require('jsonwebtoken');
@@ -38,9 +40,45 @@ verificarConsumidor = async (req, res, next) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+verificarAdministrador = async (req, res, next) => {
+    try {
+        const idAdmin = req.uid;
+        adminDB = await Admin.findById(idAdmin);
+        if (!adminDB) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'El token no pertenece a un Administrador'
+            });
+        }
+        next();
+    } catch (error) {
+        console.log(error);
+    }
 
 }
+
+verificarComercio = async (req, res, next) => {
+    try {
+        const idComercio = req.uid;
+        comercioDB = await Comercio.findById(idComercio);
+        if (!comercioDB) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'El token no pertenece a un Comercio'
+            });
+        }
+        next();
+    } catch (error) {
+        console.log(error);
+    }
+
+}
+
 module.exports = {
     verificarToken,
-    verificarConsumidor
+    verificarConsumidor,
+    verificarAdministrador,
+    verificarComercio
 }

@@ -5,28 +5,15 @@ const fs = require('fs');
 const { verificarArchivos, guardarArchivo } = require('../helpers/files');
 const { generarJWT } = require('../helpers/jwt-helper');
 
-const getSolicitudes = async (req, res) => {
-    try {
-        const solicitudesDB = await Solicitud.find();
-        res.json({
-            ok: true,
-            solicitudesDB
-        });
-    } catch (error) {
-        res.status(500).json({
-            ok: false,
-            error
-        });
-    }
-}
 const getSolicitud = async (req, res) => {
     try {
-        const id = req.params.id;
-        const solicitudDB = await Solicitud.findById(id);
+        const email = req.body.email;
+        const lowerCaseEmail = email.toLowerCase();
+        const solicitudDB = await Solicitud.findOne({email: lowerCaseEmail});
         if (!solicitudDB) {
             return res.status(500).json({
                 ok: false,
-                msg: 'La solicitud no existe'
+                msg: 'El correo no existe en ninguna solicitud'
             });
         }
         res.json({
@@ -44,6 +31,7 @@ const postSolicitud = async (req, res) => {
     try {
         // decostruccion del objeto req.body
         const { nombre, telefono, email } = req.body;
+        const newEmail = email.toLowerCase();
         // Verificacion dearchivos (!null, ext)
         let files = req.files;
         if (verificarArchivos(files)[0] === false) {
@@ -56,7 +44,7 @@ const postSolicitud = async (req, res) => {
         const solicitud = new Solicitud({
             nombre,
             telefono,
-            email
+            email: newEmail
         });
         const solicitudDB = await solicitud.save();
         
@@ -118,7 +106,6 @@ const sendImage = async (req, res) => {
 }
 
 module.exports = {
-    getSolicitudes,
     getSolicitud,
     postSolicitud,
     sendImage

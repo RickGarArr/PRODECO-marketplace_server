@@ -1,17 +1,23 @@
-const path = require('path')
+const path = require('path');
+const fs = require('fs');
 
 function borrarCarpeta(path) {
-    if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach(function(file) {
-            var curPath = path + '/' + file;
-            if (fs.lstatSync(curPath).isDirectory()){
-                borrarCarpeta(curPath);
-            } else {
-                fs.unlinkSync(curPath);
-            }
-        });
-        fs.rmdirSync(path);
-    }
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach(function (file) {
+                var curPath = path + '/' + file;
+                if (fs.lstatSync(curPath).isDirectory()) {
+                    borrarCarpeta(curPath);
+                } else {
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(path);
+            resolve('Carpeta eliminada correctamente');
+        } else {
+            reject('No se pudo eliminar la carpeta, hable con el administrador');
+        }
+    })
 }
 
 const guardarArchivo = (archivo, index, pathToSave) => {    
@@ -76,5 +82,6 @@ const verificarArchivos = (files) => {
 
 module.exports = {
     verificarArchivos,
-    guardarArchivo
+    guardarArchivo,
+    borrarCarpeta
 }

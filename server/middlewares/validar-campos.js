@@ -10,7 +10,6 @@ const validarCampos = (req, res = response, next) => {
             err: errores.array()
         });
     }
-
     next();
 }
 

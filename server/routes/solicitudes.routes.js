@@ -1,24 +1,21 @@
-// Ruta -------------------------------------------- /solicitudes
 const express = require('express');
 const expressFileUpload = require('express-fileupload');
 const { check } = require('express-validator');
 const {validarCampos} = require('../middlewares/validar-campos');
-// controladores
+
 const {
-    getSolicitudes,
     getSolicitud,
     postSolicitud,
     sendImage
 } = require('../controllers/solicitudes.controller');
 
+// Ruta -------------------------------------------- /solicitudes
 const router = express();
 router.use(expressFileUpload());
-// -------------------------------------------------------------- Rutas 
-// mostrar todas las solicitudes
-router.get('/get-all',  getSolicitudes);
-// mostrar solo una solicitud por id
-router.get('/get-one/:id',[
-    check('id', 'Se requiere mongoID').isMongoId(),
+
+// mostrar solo una solicitud por email
+router.get('/get-by-email',[
+    check('email', 'El Email es requerido').isEmail(),
     validarCampos
 ], getSolicitud);
 // crear nueva solicitud
