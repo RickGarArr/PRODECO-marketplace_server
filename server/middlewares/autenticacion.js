@@ -5,7 +5,7 @@ const Comercio = require('../models/comercio.model');
 const { request } = require('express');
 const jwt = require('jsonwebtoken');
 
-let verificarToken = (req = request, res, next) => {
+const verificarToken = (req = request, res, next) => {
     let token = req.header('x-token');
     if (!token) {
         return res.status(500).json({
@@ -26,7 +26,7 @@ let verificarToken = (req = request, res, next) => {
     }
 }
 
-verificarConsumidor = async (req, res, next) => {
+const verificarConsumidor = async (req, res, next) => {
     try {
         const idConsumidor = req.uid;
         consumiodorDB = await Consumidor.findById(idConsumidor);
@@ -42,7 +42,7 @@ verificarConsumidor = async (req, res, next) => {
     }
 }
 
-verificarAdministrador = async (req, res, next) => {
+const verificarAdministrador = async (req, res, next) => {
     try {
         const idAdmin = req.uid;
         adminDB = await Admin.findById(idAdmin);
@@ -59,7 +59,7 @@ verificarAdministrador = async (req, res, next) => {
 
 }
 
-verificarComercio = async (req, res, next) => {
+const verificarComercio = async (req, res, next) => {
     try {
         const idComercio = req.uid;
         comercioDB = await Comercio.findById(idComercio);
@@ -76,8 +76,30 @@ verificarComercio = async (req, res, next) => {
 
 }
 
+const verificarTokenSolicitud = async (req, res, next) => {
+    let token = req.header('x-token');
+    if (!token) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'No hay token en la solicitud'
+        });
+    }
+
+    try {
+        const solicitud = await jwt.verify(token, process.env.JWT_SECRET);
+        req.solicitud = solicitud;
+        next();
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            msg: 'invalid JWT'
+        });
+    }
+}
+
 module.exports = {
     verificarToken,
+    verificarTokenSolicitud,
     verificarConsumidor,
     verificarAdministrador,
     verificarComercio

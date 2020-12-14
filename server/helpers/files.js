@@ -80,8 +80,38 @@ const verificarArchivos = (files) => {
     return [true, ''];
 }
 
+const verificarImagen = (imagen) => {
+    const extValidas = ['.jpg', '.jpeg', '.png'];
+    const ext = path.extname(imagen.name).toLowerCase();
+    if (!extValidas.includes(ext)) {
+        return {
+            campo: 'imagenes',
+            msg: `el Archivo (${imagen.name}) subido no es una imagen valida`
+        };
+    }
+}
+
+const crearDirectorio = async (tipo, id) => {
+    return new Promise((resolve, reject) => {
+        const dirPath = path.join(__dirname, `../../uploads/${tipo}/${id}`);
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdir(dirPath, (err) => {
+                if (err) {
+                    reject('No se pudo crear la carpeta');
+                } else {
+                    resolve('Carpeta creada correctamente');
+                }
+            });
+        } else {
+            reject('No se pudo crear la carpeta');
+        }
+    });
+}
+
 module.exports = {
+    verificarImagen,
     verificarArchivos,
     guardarArchivo,
-    borrarCarpeta
+    borrarCarpeta,
+    crearDirectorio
 }

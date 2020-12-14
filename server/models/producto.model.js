@@ -3,6 +3,15 @@ const mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
 let productoSchema = new Schema({
+    activo: {
+        type: Boolean,
+        required: [true, 'El opcion activo (true, false) es necesaria'],
+        default: true
+    },
+    comercio: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comercios'
+    },
     titulo: {
         type: String,
         required: true
@@ -11,7 +20,10 @@ let productoSchema = new Schema({
         type: String,
         required: true
     },
-    cantidadStock: {
+    imagenPrincipal: {
+        type: String
+    },
+    stock: {
         type: Number
     },
     precio: {
@@ -20,6 +32,7 @@ let productoSchema = new Schema({
     },
     categoria: {
         type: Schema.Types.ObjectId,
+        ref: 'Categorias',
         required: true
     },
     imagenes: [{

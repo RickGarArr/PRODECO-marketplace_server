@@ -1,11 +1,169 @@
-const Solicitud = require('../models/solicitud.model');
+// Modelos
 const Admin = require('../models/admin.model');
 const Categoria = require('../models/categoria.model');
+const Solicitud = require('../models/solicitud.model');
+const Comercio = require('../models/comercio.model');
+const Consumidor = require('../models/consumidor.model');
+// -----------------
 const bcrypt = require('bcrypt');
 const { generarJWT } = require('../helpers/jwt-helper');
 const { request } = require('express');
 const { borrarCarpeta } = require('../helpers/files');
 const path = require('path');
+const { sendEmail } = require('../helpers/email');
+
+ //#region -------------------------------- GETS
+// Mostrar todas las Solicitudes
+const getSolicitudes = async (req = request, res) => {
+    try {
+        const pagina = parseInt(req.query.pagina) || 1;
+        const page_size = 10;
+        const skip = (pagina - 1) * page_size;
+
+        const solicitudesDB = await Solicitud.find().skip(skip).limit(page_size);
+        res.json({
+            ok: true,
+            solicitudesDB
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            error
+        });
+    }
+}
+// Mostrar todos los comercios
+const getComercios = async (req, res) => {
+    try {
+        const pagina = parseInt(req.query.pagina) || 1;
+        const page_size = 10;
+        const skip = (pagina - 1) * page_size;
+
+        const comerciosDB = await Comercio.find().skip(skip).limit(page_size);
+        res.json({
+            ok: true,
+            comerciosDB
+        });
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            error
+        });
+    }
+}
+// mostrar todos los consumidores
+const getConsumidores = async (req, res) => {
+    try {
+        const pagina = parseInt(req.query.pagina) || 1;
+        const page_size = 10;
+        const skip = (pagina - 1) * page_size;
+        const consumidoresDB = await Consumidor.find().skip(skip).limit(page_size);
+        res.json({
+            ok: true,
+            consumidoresDB
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            error
+        });
+    }
+}
+// mostrar todas las categorias
+const getCategorias = async (req, res) => {
+    try {
+        const categoriasDB = await Categoria.find();
+        res.json({
+            ok: true,
+            categoriasDB
+        });
+    } catch (error) {
+        console.log(error);
+    }
+} 
+//#endregion
+
+//#region --------------------------------- DELETE
+// eliminar una solicitud
+const deleteSolicitud = async (req, res) => {
+    try {
+        // Obtener el valor id de la solicitud a eliminar
+        const idSolicitud = req.params.idSolicitud;
+        // crear el path de la solicitud
+        const pathSolicitud = path.join(__dirname, `../../uploads/solicitudes/${idSolicitud}`);
+        // resolver las dos promesas y guardar resultados
+        const [solicitudEliminada, resp] = await Promise.all([
+            await Solicitud.findByIdAndRemove(idSolicitud),
+            await borrarCarpeta(pathSolicitud)
+        ]);
+        // si no hay solicitud en la base de datos regresa un error
+        if (!solicitudEliminada) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'La solicitud no existe en la base de datos'
+            });
+        }
+        // responde 
+        res.json({
+            solicitudEliminada,
+            resp
+        });
+    } catch (error) {
+        res.status(500).json({
+            error
+        });
+    }
+}
+// Desactivar un comercio
+const desactivateComercio = async (req, res) => {
+    try {
+        const idComercio = req.params.idComercio;
+        const comercioDB = await Comercio.findByIdAndUpdate(idComercio, {activo: false}, {new: true});
+        if (!comercioDB) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'El comercio no existe en la base de datos'
+            });
+        }
+        res.json({
+            ok: true,
+            comercioDesactiado: comercioDB
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+// desactivar un consumidor
+const desactivateConsumidor = async (req, res) => {
+    try {
+        const idConsumidor = req.params.idConsumidor;
+        const consumidorDB = await Consumidor.findByIdAndUpdate(idConsumidor, {activo: false}, {new: true});
+        if (!consumidorDB) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'El comercio no existe en la base de datos'
+            });
+        }
+        res.json({
+            ok: true,
+            usuarioDesactiado: consumidorDB
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+//#endregion
+
+const responderSolicitud = async (req, res) => {
+    const idSolicitud = req.params.idSolicitud;
+    try {
+        const solicitudDB = await Solicitud.findByIdAndUpdate(idSolicitud, {});
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // registrar un nuevo administrador
 const registerAdmin = async (req, res) => {
@@ -42,55 +200,8 @@ const registerAdmin = async (req, res) => {
         });
     }
 }
-// Mostrar todas las solicitueds al ADMIN
-const getSolicitudes = async (req = request, res) => {
-    try {
-        const pagina = parseInt(req.query.pagina) || 1;
-        const page_size = 10;
-        const skip = (pagina - 1) * page_size;
-
-        const solicitudesDB = await Solicitud.find().skip(skip).limit(page_size);
-        res.json({
-            ok: true,
-            solicitudesDB
-        });
-    } catch (error) {
-        res.status(500).json({
-            ok: false,
-            error
-        });
-    }
-}
 // eliminar una solicitud
-const deleteSolicitud = async (req, res) => {
-    try {
-        // Obtener el valor id de la solicitud a eliminar
-        const idSolicitud = req.params.idSolicitud;
-        // crear el path de la solicitud
-        const pathSolicitud = path.join(__dirname, `../../uploads/solicitudes/${idSolicitud}`);
-        // resolver las dos promesas y guardar resultados
-        const [solicitudEliminada, resp] = await Promise.all([
-            await Solicitud.findByIdAndRemove(idSolicitud),
-            await borrarCarpeta(pathSolicitud)
-        ]);
-        // si no hay solicitud en la base de datos regresa un error
-        if (!solicitudEliminada) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'La solicitud no existe en la base de datos'
-            });
-        }
-        // responde 
-        res.json({
-            solicitudEliminada,
-            resp
-        });
-    } catch (error) {
-        res.status(500).json({
-            error
-        });
-    }
-}
+
 // generar una nueva categoria
 const createCategoria = async (req, res) => {
     try {
@@ -157,26 +268,33 @@ const desactivateCategoria = async (req, res) => {
         });
     }
 }
+// mostrar todos los consumidores registrados
 
-// -----------------------------------------------------------------------
-const getCategorias = async (req, res) => {
+// enviar un email
+const sendEmailCtrl = async (req, res) => {
     try {
-        const categoriasDB = await Categoria.find();
+        const resp = await sendEmail('asdadadwfe', 'ricardogarciarreola@gmail.com');
         res.json({
-            ok: true,
-            categoriasDB
+            resp
         });
     } catch (error) {
         console.log(error);
     }
-} 
+}
+// mostrar todas las categorias registradas
+
 
 module.exports = {
     registerAdmin,
     getSolicitudes,
-    createCategoria,
-    updateCategoria,
+    getComercios,
+    getConsumidores,
     getCategorias,
     desactivateCategoria,
-    deleteSolicitud
+    desactivateComercio,
+    desactivateConsumidor,
+    createCategoria,
+    updateCategoria,
+    deleteSolicitud,
+    sendEmailCtrl
 }

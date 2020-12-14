@@ -85,6 +85,17 @@ const postSolicitud = async (req, res) => {
         });
     }
 }
+const resendToken = async (req, res) => {
+    try {
+        const email = req.body.email;
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            ok: false,
+            error
+        });
+    }
+}
 const sendImage = async (req, res) => {
     try {
         let id = req.params.id;

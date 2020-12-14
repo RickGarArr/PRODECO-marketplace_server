@@ -29,7 +29,12 @@ let solicitudSchema = new Schema({
     },
     ine: {
         type: String
-    } 
+    },
+    estado: {
+        type: String,
+        required: [true, 'El estado Es Obligatorio'],
+        default: 'pendiente' //pendiente, rechazada, aceptada
+    }
 });
 
 solicitudSchema.pre('save', function(next){

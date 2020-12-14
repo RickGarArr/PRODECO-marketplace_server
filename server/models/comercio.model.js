@@ -18,13 +18,23 @@ let comercioSchema = new mongoose.Schema({
         required: [true, 'El correo es requerido'],
         unique: true
     },
+    imgPerfil: {
+        type: String,
+        default: 'no-image.png'
+    },
     password: {
         type: String,
         required: [true, 'El password es requerido']
     },
-    idSolicitud: {
+    solicitud: {
         type: Schema.Types.ObjectId,
-        ref: 'Solicitudes'
+        ref: 'Solicitudes',
+        required: [true, 'El idSolicitud es requerido es requerido']
+    },
+    activo: {
+        type: Boolean,
+        required: [true, 'El campo activo (true/false) es requerido'],
+        default: true
     },
     fechaCreacion: {
         type: Date

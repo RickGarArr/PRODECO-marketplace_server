@@ -1,6 +1,7 @@
 const express = require('express');
 const {
     registerConsumidor,
+    registerEmail,
     createDireccion,
     getDirecciones,
     deleteDireccion,
@@ -21,6 +22,11 @@ router.post('/register', [
     check('password', 'La Contraseña es Necesaria').notEmpty(),
     validarCampos
 ], registerConsumidor);
+// validar email
+router.post('/register/email', [
+    check('email', 'el email es necesario').isEmail(),
+    validarCampos
+], registerEmail);
 // Ruta para crear una nueva direccion
 router.post('/direcciones/create', [
     verificarToken,

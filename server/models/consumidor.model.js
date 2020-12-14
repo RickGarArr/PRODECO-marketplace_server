@@ -36,7 +36,12 @@ let consumidorSchema = new Schema({
     compras: [{
         type: Schema.Types.ObjectId,
         ref: 'Compras'
-    }]
+    }],
+    activo: {
+        type: Boolean,
+        required: [true, 'El campo activo (true/false) es requerido'],
+        default: true
+    },
 });
 
 consumidorSchema.pre('save', function(next){

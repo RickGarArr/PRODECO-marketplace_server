@@ -33,6 +33,9 @@ const registerConsumidor = async (req, res) => {
 
 
 }
+const registerEmail = async (req, res) => {
+
+}
 // Registrar una direccion de contacto
 const createDireccion = async (req, res) => {
     try {
@@ -134,26 +137,12 @@ const updateDireccion = async (req, res) => {
     }
 }
 
-const getConsumidores = async (req, res) => {
-    try {
-        const consumidoresDB = await Consumidor.find();
-        res.json({
-            ok: true,
-            consumidoresDB
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            error
-        });
-    }
-}
+
 
 
 module.exports = {
     registerConsumidor,
-    getConsumidores,
+    registerEmail,
     createDireccion,
     deleteDireccion,
     getDirecciones,

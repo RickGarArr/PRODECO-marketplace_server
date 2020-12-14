@@ -1,4 +1,3 @@
-// Archivo de configuracion
 const expres = require('express');
 const { dbConection } = require('./database/config');
 const bodyPareser = require('body-parser');
